@@ -48,15 +48,33 @@ public class PlayerController : MonoBehaviour
         float moveX = Input.GetAxis("Horizontal");
         float moveZ = Input.GetAxis("Vertical");
 
-        Vector3 move = new Vector3(moveX, 0f, moveZ).normalized;
+        // Use GetAxisRaw for snappier input detection (instantly drops to 0 when keys are released)
+        Vector3 move = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical")).normalized;
 
-        rb.linearVelocity = new Vector3(
-            move.x * speed,
-            rb.linearVelocity.y,
-            move.z * speed
-        );
+        // Raise the threshold from 0.1f to 0.15f to filter out tiny physics jitter
+        bool isMoving = move.magnitude > 0.15f;
 
-        bool isMoving = move.magnitude > 0.1f;
+        if (isMoving)
+        {
+            // 1. Apply movement velocity only when actually pressing keys
+            rb.linearVelocity = new Vector3(
+                move.x * speed,
+                rb.linearVelocity.y,
+                move.z * speed
+            );
+
+            // 2. Smoothly rotate towards movement direction
+            float targetAngle = Mathf.Atan2(move.x, move.z) * Mathf.Rad2Deg;
+            Quaternion targetRotation = Quaternion.Euler(0f, targetAngle, 0f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 15f * Time.deltaTime);
+        }
+        else
+        {
+            // 3. KILL RESIDUAL SPIN & HORIZONTAL VELOCITY WHEN IDLE
+            // This stops the physics engine from sliding or spinning your player on collisions
+            rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
+            rb.angularVelocity = Vector3.zero;
+        }
 
         anim.SetBool("isRunning", isMoving);
 

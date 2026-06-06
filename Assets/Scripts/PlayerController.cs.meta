@@ -1,2 +1,16 @@
 fileFormatVersion: 2
 guid: 9c3e3d9353fd7e548b4aa6ea18ec8805
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - audioSource: {instanceID: 0}
+  - jumpSound: {instanceID: 0}
+  - footstepSound: {fileID: 8300000, guid: ce9f205e7df440544a17845da959555d, type: 3}
+  - bgm: {instanceID: 0}
+  - jumpEffect: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
